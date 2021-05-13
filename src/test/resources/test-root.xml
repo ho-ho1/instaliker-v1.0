@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Instaliker Suite">
+
+  <test name="Instaliker Test 01" parallel="methods" thread-count="1">
+    <groups>
+      <run>
+        <include name="RUNME"/>
+      </run>
+    </groups>
+    <packages>
+      <package name="com.instaliker.*"/>
+    </packages>
+  </test>
+
+</suite>
