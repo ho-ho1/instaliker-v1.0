@@ -1,5 +1,6 @@
-package com.instaliker.pages;
+package com.instaliker.pages.login;
 
+import com.instaliker.pages.Page;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
