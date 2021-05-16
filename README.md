@@ -8,9 +8,10 @@ Install Chocolatey (Windows)
 
 Install prerequisites
 ```
-choco install javaruntime
-choco install git
-choco install maven
+choco install javaruntime --yes
+choco install git --yes
+choco install maven --yes
+choco install intellijidea-community --yes
 ```
 
 ### Run
