@@ -10,6 +10,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Page {
 
+    public static final String INSTAGRAM_URL = "https://www.instagram.com/";
+
     protected WebDriver driver;
     protected WebDriverWait wait;
 
