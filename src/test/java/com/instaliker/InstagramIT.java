@@ -2,6 +2,7 @@ package com.instaliker;
 
 import com.instaliker.lib.Configuration;
 import com.instaliker.lib.CookiesManager;
+import com.instaliker.pages.MyUserPage;
 import com.instaliker.pages.login.LoginPage;
 import com.instaliker.pages.login.SaveLoginPage;
 import com.instaliker.pages.login.TurnOnNotificationsPage;
@@ -63,6 +64,13 @@ public class InstagramIT {
     public void likeRenataAll() {
         UserPage renatarysuje = new UserPage(driver, "renatarysuje");
         renatarysuje.likeAllPhotos();
+    }
+
+    @Test
+    public void readFollowing() {
+        UserPage myProfile = new MyUserPage(driver);
+        myProfile.readFollowers();
+        myProfile.readFollowing();
     }
 
 }
