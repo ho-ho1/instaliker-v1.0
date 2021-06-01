@@ -23,7 +23,7 @@ public class InstagramIT {
     private WebDriver driver;
     private final Properties properties = Configuration.properties();
 
-    @BeforeTest
+    @BeforeTest(groups = "RUNME")
     public void setup() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
