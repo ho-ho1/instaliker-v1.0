@@ -2,19 +2,20 @@ package com.instaliker;
 
 import com.instaliker.lib.Configuration;
 import com.instaliker.lib.CookiesManager;
-import com.instaliker.pages.LoginPage;
-import com.instaliker.pages.SaveLoginPage;
-import com.instaliker.pages.TurnOnNotificationsPage;
+import com.instaliker.pages.MyUserPage;
+import com.instaliker.pages.login.LoginPage;
+import com.instaliker.pages.login.SaveLoginPage;
+import com.instaliker.pages.login.TurnOnNotificationsPage;
 import com.instaliker.pages.UserPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import java.io.File;
-import java.util.List;
-import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.util.Properties;
 
 @Slf4j
 public class InstagramIT {
@@ -63,6 +64,13 @@ public class InstagramIT {
     public void likeRenataAll() {
         UserPage renatarysuje = new UserPage(driver, "renatarysuje");
         renatarysuje.likeAllPhotos();
+    }
+
+    @Test
+    public void readFollowing() {
+        UserPage myProfile = new MyUserPage(driver);
+        myProfile.readFollowers();
+        myProfile.readFollowing();
     }
 
 }

@@ -1,6 +1,7 @@
 package com.instaliker.pages;
 
 import java.util.List;
+
 import org.awaitility.Awaitility;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -24,7 +25,7 @@ public class UserPage extends Page {
     WebElement closeButton;
 
     public UserPage(WebDriver driver, String instagramUsername) {
-        super(driver, "https://www.instagram.com/" + instagramUsername);
+        super(driver, INSTAGRAM_URL + instagramUsername);
     }
 
     public void likeFirstPhoto() {
@@ -64,4 +65,13 @@ public class UserPage extends Page {
     }
 
 
+    public List<String> readFollowers() {
+        driver.get(INSTAGRAM_URL + properties.getProperty("login.username") + "/followers");
+
+        return null;
+    }
+
+    public List<String> readFollowing() {
+        return null;
+    }
 }
