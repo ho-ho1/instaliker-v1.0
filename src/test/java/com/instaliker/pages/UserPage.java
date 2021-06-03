@@ -15,6 +15,9 @@ import org.openqa.selenium.support.FindBy;
 @Slf4j
 public class UserPage extends Page {
 
+    private static final int MIN_THINK_TIME_SECONDS = 1;
+    private static final int MAX_THINK_TIME_SECONDS = 5;
+
     @FindBy(xpath = ".//div[@id='react-root']//main[@role='main']//article//a[@tabindex='0']//img/parent::div/parent::div")
     List<WebElement> photos;
 
@@ -71,21 +74,38 @@ public class UserPage extends Page {
         likeAllPhotosWithProbability(100);
     }
 
+    public void likeUpToPhotosWithProbablity(int maxPhotosToLike, int percent) {
+        likeUpToPhotosWithProbabilityAndDelay(maxPhotosToLike, percent, 0, 0);
+    }
+
+    public void likeUpToPhotosWithProbablityAndDelay(int maxPhotosToLike, int percent) {
+        likeUpToPhotosWithProbabilityAndDelay(maxPhotosToLike, percent, MIN_THINK_TIME_SECONDS, MAX_THINK_TIME_SECONDS);
+    }
+
     public void likeAllPhotosWithProbability(int percent) {
         likeAllPhotosWithProbabilityAndDelay(percent, 0, 0);
     }
 
     public void likeAllPhotosWithProbabilityAndDelay(int percent, int minSeconds, int maxSeconds) {
+        likeUpToPhotosWithProbabilityAndDelay(-1, percent, minSeconds, maxSeconds);
+    }
+
+    public void likeUpToPhotosWithProbabilityAndDelay(int maxPhotosToLike, int percent, int minSeconds, int maxSeconds) {
         if (photos.isEmpty()) {
             log.warn("User '{}' doesn't have any photos to like", instagramUserName);
             return;
         }
         photos.get(0).click();
         boolean isNextPhotoAvailable;
+        int photosLiked = 0;
         do {
+            if (photosLiked >= maxPhotosToLike && photosLiked > 0) {
+                break;
+            }
             simulateThinkingInSeconds(minSeconds, maxSeconds);
             if (DataGenerator.getRandomPercent() < percent) {
                 likeCurrentPhoto();
+                photosLiked++;
             }
             isNextPhotoAvailable = nextPhotoButtons.size() > 0;
             if (isNextPhotoAvailable) {
@@ -97,6 +117,7 @@ public class UserPage extends Page {
 
     private void simulateThinkingInSeconds(int minSeconds, int maxSeconds) {
         final int thinkingInMillis = DataGenerator.getIntBetween(minSeconds * 1000, maxSeconds * 1000);
+        log.debug("Think about nothing for {} ms.", thinkingInMillis);
         sleep(thinkingInMillis);
     }
 

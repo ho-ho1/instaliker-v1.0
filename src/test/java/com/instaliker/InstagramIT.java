@@ -86,7 +86,7 @@ public class InstagramIT {
 
         final List<String> followings = myProfile.readFollowings();
         UserPage randomFollowing = new UserPage(driver, DataGenerator.getRandomElement(followings));
-        randomFollowing.likeAllPhotosWithProbabilityAndDelay(50, 1, 5);
+        randomFollowing.likeUpToPhotosWithProbablityAndDelay(20, 75);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class InstagramIT {
         final List<String> hashtags = myProfile.readHashtags();
         HashtagPage randomHashtag = new HashtagPage(driver, DataGenerator.getRandomElement(hashtags));
 
-        randomHashtag.likeFirstPhoto();
+        randomHashtag.likeUpToPhotosWithProbablityAndDelay(10, 80);
     }
 
 }
