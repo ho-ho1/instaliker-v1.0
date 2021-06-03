@@ -1,12 +1,18 @@
 package com.instaliker.pages;
 
+import com.instaliker.lib.DataGenerator;
+import java.time.Duration;
 import java.util.List;
-
+import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+@Slf4j
 public class UserPage extends Page {
 
     @FindBy(xpath = ".//div[@id='react-root']//main[@role='main']//article//a[@tabindex='0']//img/parent::div/parent::div")
@@ -24,8 +30,11 @@ public class UserPage extends Page {
     @FindBy(xpath = ".//*[name()='svg'][@aria-label='Close']")
     WebElement closeButton;
 
+    private final String instagramUserName;
+
     public UserPage(WebDriver driver, String instagramUsername) {
         super(driver, INSTAGRAM_URL + instagramUsername);
+        this.instagramUserName = instagramUsername;
     }
 
     public void likeFirstPhoto() {
@@ -34,11 +43,18 @@ public class UserPage extends Page {
 
     public void likeFirst(int photosToLike) {
         for (int i = 0; i < photosToLike; i++) {
-            likePhoto(i);
+            try {
+                likePhoto(i);
+            } catch (NoSuchElementException ex) {
+                log.warn("User '{}' hasn't got a photo with id: {}", instagramUserName, i);
+            }
         }
     }
 
     private void likePhoto(int number) {
+        if (number >= photos.size()) {
+            throw new NoSuchElementException();
+        }
         photos.get(number).click();
         likeCurrentPhoto();
         closeButton.click();
@@ -52,10 +68,25 @@ public class UserPage extends Page {
     }
 
     public void likeAllPhotos() {
+        likeAllPhotosWithProbability(100);
+    }
+
+    public void likeAllPhotosWithProbability(int percent) {
+        likeAllPhotosWithProbabilityAndDelay(percent, 0, 0);
+    }
+
+    public void likeAllPhotosWithProbabilityAndDelay(int percent, int minSeconds, int maxSeconds) {
+        if (photos.isEmpty()) {
+            log.warn("User '{}' doesn't have any photos to like", instagramUserName);
+            return;
+        }
         photos.get(0).click();
         boolean isNextPhotoAvailable;
         do {
-            likeCurrentPhoto();
+            simulateThinkingInSeconds(minSeconds, maxSeconds);
+            if (DataGenerator.getRandomPercent() < percent) {
+                likeCurrentPhoto();
+            }
             isNextPhotoAvailable = nextPhotoButtons.size() > 0;
             if (isNextPhotoAvailable) {
                 nextPhotoButtons.get(0).click();
@@ -64,14 +95,58 @@ public class UserPage extends Page {
         closeButton.click();
     }
 
-
-    public List<String> readFollowers() {
-        driver.get(INSTAGRAM_URL + properties.getProperty("login.username") + "/followers");
-
-        return null;
+    private void simulateThinkingInSeconds(int minSeconds, int maxSeconds) {
+        final int thinkingInMillis = DataGenerator.getIntBetween(minSeconds * 1000, maxSeconds * 1000);
+        sleep(thinkingInMillis);
     }
 
-    public List<String> readFollowing() {
-        return null;
+    private void sleep(int millis) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    @FindBy(xpath = ".//div[@role='dialog']//li/div[contains(@aria-labelledby, ' ')]//span/a")
+    List<WebElement> peopleList;
+
+    @FindBy(xpath = ".//a[contains(@href, '/followers/')]")
+    WebElement followersButton;
+
+    public List<String> readFollowers() {
+        navigateUserPageIfNecessary();
+        followersButton.click();
+        return readPeopleAndClose();
+    }
+
+    @FindBy(xpath = ".//a[contains(@href, '/following/')]")
+    WebElement followingButton;
+
+    public List<String> readFollowings() {
+        navigateUserPageIfNecessary();
+        followingButton.click();
+        return readPeopleAndClose();
+    }
+
+    private void navigateUserPageIfNecessary() {
+        if (!driver.getCurrentUrl().contains(INSTAGRAM_URL + instagramUserName)) {
+            driver.get(INSTAGRAM_URL + instagramUserName);
+        }
+    }
+
+    private List<String> readPeopleAndClose() {
+        Awaitility.await()
+            .atMost(Duration.ofSeconds(30))
+            .pollInterval(Duration.ofSeconds(1))
+            .until(() -> peopleList.size() > 0);
+
+        final List<String> followers = peopleList
+            .stream()
+            .map(WebElement::getText)
+            .collect(Collectors.toList());
+
+        closeButton.click();
+        return followers;
     }
 }
