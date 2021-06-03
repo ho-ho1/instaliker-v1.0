@@ -3,12 +3,14 @@ package com.instaliker.pages.login;
 import com.instaliker.pages.Page;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+@Slf4j
 public class LoginPage extends Page {
 
     @FindBy(xpath = ".//input[@name='username']")
@@ -36,10 +38,12 @@ public class LoginPage extends Page {
 
     public void login() {
         wait.until(ExpectedConditions.visibilityOf(loginText));
-        loginText.sendKeys(properties.getProperty("login.username"));
+        final String username = properties.getProperty("login.username");
+        loginText.sendKeys(username);
         passwordText.sendKeys(decodePassword(properties.getProperty("login.password.base64")));
         wait.until(ExpectedConditions.visibilityOf(loginButton));
         wait.until(ExpectedConditions.elementToBeClickable(loginButton));
+        log.info("Login as: {}", username);
         loginButton.click();
     }
 
