@@ -26,7 +26,7 @@ public class Page {
 
     public Page(WebDriver driver, String page) {
         this(driver);
-        log.info("Open page: {}" + page);
+        log.info("Open page: {}", page);
         driver.get(page);
         PageFactory.initElements(driver, this);
     }

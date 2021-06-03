@@ -44,7 +44,7 @@ public class InstagramIT {
         turnOnNotificationsPage.notNow();
     }
 
-    @Test(groups = "RUNME")
+    @Test
     public void likeAccountsFromConfig() {
         final String[] accounts = properties.getProperty("instagram.accounts").split(",");
         final int photosToLike = Integer.parseInt(properties.getProperty("instagram.like.photos"));
@@ -89,14 +89,15 @@ public class InstagramIT {
         randomFollowing.likeUpToPhotosWithProbablityAndDelay(20, 75);
     }
 
-    @Test
+    @Test(groups = "RUNME")
     public void likeHashtags() {
         UserPage myProfile = new MyUserPage(driver);
 
         final List<String> hashtags = myProfile.readHashtags();
-        HashtagPage randomHashtag = new HashtagPage(driver, DataGenerator.getRandomElement(hashtags));
-
-        randomHashtag.likeUpToPhotosWithProbablityAndDelay(10, 80);
+        for (String hashtag : hashtags) {
+            HashtagPage hashTagPage = new HashtagPage(driver, hashtag);
+            hashTagPage.likeUpToPhotosWithProbablityAndDelay(10, 80);
+        }
     }
 
 }

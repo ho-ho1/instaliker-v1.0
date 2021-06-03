@@ -181,11 +181,14 @@ public class UserPage extends Page {
             .until(() -> peopleList.size() > 0);
     }
 
+    @FindBy(xpath = ".//div[@role='dialog']//div/span[text()='#']")
+    WebElement noHashtags;
+
     private void waitForHashtags() {
         Awaitility.await()
             .atMost(Duration.ofSeconds(30))
             .pollInterval(Duration.ofSeconds(1))
-            .until(() -> hashtagsList.size() > 0);
+            .until(() -> hashtagsList.size() > 0 || noHashtags.isDisplayed());
     }
 
     private List<String> readPeopleAndClose() {
