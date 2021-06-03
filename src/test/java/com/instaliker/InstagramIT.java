@@ -2,20 +2,21 @@ package com.instaliker;
 
 import com.instaliker.lib.Configuration;
 import com.instaliker.lib.CookiesManager;
+import com.instaliker.lib.DataGenerator;
 import com.instaliker.pages.MyUserPage;
+import com.instaliker.pages.UserPage;
 import com.instaliker.pages.login.LoginPage;
 import com.instaliker.pages.login.SaveLoginPage;
 import com.instaliker.pages.login.TurnOnNotificationsPage;
-import com.instaliker.pages.UserPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import java.io.File;
+import java.util.List;
+import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.util.Properties;
 
 @Slf4j
 public class InstagramIT {
@@ -28,6 +29,7 @@ public class InstagramIT {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
 
+        driver.get("https://www.instagram.com/");
         CookiesManager cookiesManager = new CookiesManager(driver);
         cookiesManager.load(new File("cookies.csv"));
 
@@ -67,10 +69,23 @@ public class InstagramIT {
     }
 
     @Test
-    public void readFollowing() {
+    public void likeFollowers() {
         UserPage myProfile = new MyUserPage(driver);
-        myProfile.readFollowers();
-        myProfile.readFollowing();
+
+        final List<String> followers = myProfile.readFollowers();
+        for (String follower : followers) {
+            UserPage followerPage = new UserPage(driver, follower);
+            followerPage.likeFirst(3);
+        }
+    }
+
+    @Test
+    public void likeFollowings() {
+        UserPage myProfile = new MyUserPage(driver);
+
+        final List<String> followings = myProfile.readFollowings();
+        UserPage randomFollowing = new UserPage(driver, DataGenerator.getRandomElement(followings));
+        randomFollowing.likeAllPhotosWithProbabilityAndDelay(50, 1, 5);
     }
 
 }
