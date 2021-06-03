@@ -3,6 +3,7 @@ package com.instaliker;
 import com.instaliker.lib.Configuration;
 import com.instaliker.lib.CookiesManager;
 import com.instaliker.lib.DataGenerator;
+import com.instaliker.pages.HashtagPage;
 import com.instaliker.pages.MyUserPage;
 import com.instaliker.pages.UserPage;
 import com.instaliker.pages.login.LoginPage;
@@ -86,6 +87,16 @@ public class InstagramIT {
         final List<String> followings = myProfile.readFollowings();
         UserPage randomFollowing = new UserPage(driver, DataGenerator.getRandomElement(followings));
         randomFollowing.likeAllPhotosWithProbabilityAndDelay(50, 1, 5);
+    }
+
+    @Test
+    public void likeHashtags() {
+        UserPage myProfile = new MyUserPage(driver);
+
+        final List<String> hashtags = myProfile.readHashtags();
+        HashtagPage randomHashtag = new HashtagPage(driver, DataGenerator.getRandomElement(hashtags));
+
+        randomHashtag.likeFirstPhoto();
     }
 
 }

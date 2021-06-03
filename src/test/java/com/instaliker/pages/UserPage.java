@@ -135,11 +135,22 @@ public class UserPage extends Page {
         }
     }
 
-    private List<String> readPeopleAndClose() {
+    private void waitForPeople() {
         Awaitility.await()
             .atMost(Duration.ofSeconds(30))
             .pollInterval(Duration.ofSeconds(1))
             .until(() -> peopleList.size() > 0);
+    }
+
+    private void waitForHashtags() {
+        Awaitility.await()
+            .atMost(Duration.ofSeconds(30))
+            .pollInterval(Duration.ofSeconds(1))
+            .until(() -> hashtagsList.size() > 0);
+    }
+
+    private List<String> readPeopleAndClose() {
+        waitForPeople();
 
         final List<String> followers = peopleList
             .stream()
@@ -148,5 +159,28 @@ public class UserPage extends Page {
 
         closeButton.click();
         return followers;
+    }
+
+    @FindBy(xpath = ".//a[contains(@href, '/hashtag_following/')]")
+    WebElement hashtagsButton;
+
+    @FindBy(xpath = ".//div[@role='dialog']//div[contains(@aria-labelledby, ' ')]//div[string-length(@id)>0]//a")
+    List<WebElement> hashtagsList;
+
+    public List<String> readHashtags() {
+        navigateUserPageIfNecessary();
+        followingButton.click();
+        waitForPeople();
+        hashtagsButton.click();
+        waitForHashtags();
+
+        final List<String> hashtags = hashtagsList
+            .stream()
+            .map(WebElement::getText)
+            .map(str -> str.substring(1))
+            .collect(Collectors.toList());
+
+        closeButton.click();
+        return hashtags;
     }
 }
