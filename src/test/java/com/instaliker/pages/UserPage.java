@@ -60,12 +60,16 @@ public class UserPage extends Page {
         }
         photos.get(number).click();
         likeCurrentPhoto();
-        closeButton.click();
+        clickCloseButton();
     }
 
     private void likeCurrentPhoto() {
         Awaitility.await().until(() -> likeButtons.size() > 0 || unlikeButtons.size() > 0);
+        if (unlikeButtons.size() > 0) {
+            log.info("Photo liked already");
+        }
         if (likeButtons.size() > 0) {
+            log.info("Click 'Like' on current photo!");
             likeButtons.get(0).click();
         }
     }
@@ -100,19 +104,23 @@ public class UserPage extends Page {
         int photosLiked = 0;
         do {
             if (photosLiked >= maxPhotosToLike && photosLiked > 0) {
+                log.info("Max number of photos liked ({}) reached", maxPhotosToLike);
                 break;
             }
             simulateThinkingInSeconds(minSeconds, maxSeconds);
-            if (DataGenerator.getRandomPercent() < percent) {
+            final int randomPercent = DataGenerator.getRandomPercent();
+            if (randomPercent < percent) {
+                log.info("I like this photo: guessed {} (threshold: {})", randomPercent, percent);
                 likeCurrentPhoto();
                 photosLiked++;
             }
             isNextPhotoAvailable = nextPhotoButtons.size() > 0;
             if (isNextPhotoAvailable) {
+                log.info("Click next");
                 nextPhotoButtons.get(0).click();
             }
         } while (isNextPhotoAvailable);
-        closeButton.click();
+        clickCloseButton();
     }
 
     private void simulateThinkingInSeconds(int minSeconds, int maxSeconds) {
@@ -137,8 +145,13 @@ public class UserPage extends Page {
 
     public List<String> readFollowers() {
         navigateUserPageIfNecessary();
-        followersButton.click();
+        clickFollowersButton();
         return readPeopleAndClose();
+    }
+
+    private void clickFollowersButton() {
+        log.info("Click 'Followers' button");
+        followersButton.click();
     }
 
     @FindBy(xpath = ".//a[contains(@href, '/following/')]")
@@ -146,8 +159,13 @@ public class UserPage extends Page {
 
     public List<String> readFollowings() {
         navigateUserPageIfNecessary();
-        followingButton.click();
+        clickFollowingButton();
         return readPeopleAndClose();
+    }
+
+    private void clickFollowingButton() {
+        log.info("Click 'Following' button");
+        followingButton.click();
     }
 
     private void navigateUserPageIfNecessary() {
@@ -177,9 +195,16 @@ public class UserPage extends Page {
             .stream()
             .map(WebElement::getText)
             .collect(Collectors.toList());
+        log.info("Collected {} items", peopleList.size());
+        log.debug(peopleList.toString());
 
-        closeButton.click();
+        clickCloseButton();
         return followers;
+    }
+
+    private void clickCloseButton() {
+        log.info("Close dialog (by X button)");
+        closeButton.click();
     }
 
     @FindBy(xpath = ".//a[contains(@href, '/hashtag_following/')]")
@@ -190,9 +215,9 @@ public class UserPage extends Page {
 
     public List<String> readHashtags() {
         navigateUserPageIfNecessary();
-        followingButton.click();
+        clickFollowingButton();
         waitForPeople();
-        hashtagsButton.click();
+        clickHashtagsButton();
         waitForHashtags();
 
         final List<String> hashtags = hashtagsList
@@ -200,8 +225,15 @@ public class UserPage extends Page {
             .map(WebElement::getText)
             .map(str -> str.substring(1))
             .collect(Collectors.toList());
+        log.info("Collected {} hashtags", hashtagsList.size());
+        log.debug(hashtagsList.toString());
 
-        closeButton.click();
+        clickCloseButton();
         return hashtags;
+    }
+
+    private void clickHashtagsButton() {
+        log.info("Click 'Hashtags'");
+        hashtagsButton.click();
     }
 }
