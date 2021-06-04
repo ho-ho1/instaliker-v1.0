@@ -11,6 +11,7 @@ import com.instaliker.pages.login.SaveLoginPage;
 import com.instaliker.pages.login.TurnOnNotificationsPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import lombok.extern.slf4j.Slf4j;
@@ -94,9 +95,13 @@ public class InstagramIT {
         UserPage myProfile = new MyUserPage(driver);
 
         final List<String> hashtags = myProfile.readHashtags();
+        Collections.shuffle(hashtags);
         for (String hashtag : hashtags) {
             HashtagPage hashTagPage = new HashtagPage(driver, hashtag);
             hashTagPage.likeUpToPhotosWithProbablityAndDelay(10, 80);
+            hashTagPage.likeUpToPhotosWithProbablityAndDelay(
+                Integer.parseInt(properties.getProperty("hashtag.photos.like.count")),
+                Integer.parseInt(properties.getProperty("hashtag.photos.like.probability")));
         }
     }
 
