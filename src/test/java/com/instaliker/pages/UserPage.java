@@ -113,6 +113,8 @@ public class UserPage extends Page {
                 log.info("I like this photo: guessed {} (threshold: {})", randomPercent, percent);
                 likeCurrentPhoto();
                 photosLiked++;
+            } else {
+                log.debug("I don't like this photo: guessed {} (threshold: {})", randomPercent, percent);
             }
             isNextPhotoAvailable = nextPhotoButtons.size() > 0;
             if (isNextPhotoAvailable) {
