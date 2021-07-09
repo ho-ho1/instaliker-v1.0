@@ -13,6 +13,13 @@ choco install git --yes
 choco install maven --yes
 choco install intellijidea-community --yes
 ```
+### Configure
+Open: src/test/resources/config.properties
+
+```
+login.username=[instagramUsername]
+login.password.base64=[instagramPasswordBase64Encoded]
+```
 
 ### Run
 Run InstaLiker
