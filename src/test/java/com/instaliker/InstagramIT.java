@@ -98,7 +98,6 @@ public class InstagramIT {
         Collections.shuffle(hashtags);
         for (String hashtag : hashtags) {
             HashtagPage hashTagPage = new HashtagPage(driver, hashtag);
-            hashTagPage.likeUpToPhotosWithProbablityAndDelay(10, 80);
             hashTagPage.likeUpToPhotosWithProbablityAndDelay(
                 Integer.parseInt(properties.getProperty("hashtag.photos.like.count")),
                 Integer.parseInt(properties.getProperty("hashtag.photos.like.probability")));
