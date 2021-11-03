@@ -70,7 +70,14 @@ public class UserPage extends Page {
         }
         if (likeButtons.size() > 0) {
             log.info("Click 'Like' on current photo!");
-            likeButtons.get(0).click();
+            if (likeButtons.get(0).isDisplayed()) {
+                likeButtons.get(0).click();
+            } else if (likeButtons.get(1).isDisplayed()) {
+                likeButtons.get(1).click();
+            } else {
+                log.warn("No 'like' buttons (out of: {}) is displayed on the page. Let's try to click that with index 1", likeButtons.size());
+                likeButtons.get(1).click();
+            }
         }
     }
 

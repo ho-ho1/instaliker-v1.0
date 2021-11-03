@@ -39,10 +39,24 @@ public class InstagramIT {
         loginPage.login();
 
         SaveLoginPage saveLoginPage = new SaveLoginPage(driver);
-        saveLoginPage.saveInfo();
+        saveLoginPage.saveInfoIfAvailable();
 
         TurnOnNotificationsPage turnOnNotificationsPage = new TurnOnNotificationsPage(driver);
         turnOnNotificationsPage.notNow();
+    }
+
+    @Test(groups = "RUNME")
+    public void likeHashtags() {
+        UserPage myProfile = new MyUserPage(driver);
+
+        final List<String> hashtags = myProfile.readHashtags();
+        Collections.shuffle(hashtags);
+        for (String hashtag : hashtags) {
+            HashtagPage hashTagPage = new HashtagPage(driver, hashtag);
+            hashTagPage.likeUpToPhotosWithProbablityAndDelay(
+                Integer.parseInt(properties.getProperty("hashtag.photos.like.count")),
+                Integer.parseInt(properties.getProperty("hashtag.photos.like.probability")));
+        }
     }
 
     @Test
@@ -88,20 +102,6 @@ public class InstagramIT {
         final List<String> followings = myProfile.readFollowings();
         UserPage randomFollowing = new UserPage(driver, DataGenerator.getRandomElement(followings));
         randomFollowing.likeUpToPhotosWithProbablityAndDelay(20, 75);
-    }
-
-    @Test(groups = "RUNME")
-    public void likeHashtags() {
-        UserPage myProfile = new MyUserPage(driver);
-
-        final List<String> hashtags = myProfile.readHashtags();
-        Collections.shuffle(hashtags);
-        for (String hashtag : hashtags) {
-            HashtagPage hashTagPage = new HashtagPage(driver, hashtag);
-            hashTagPage.likeUpToPhotosWithProbablityAndDelay(
-                Integer.parseInt(properties.getProperty("hashtag.photos.like.count")),
-                Integer.parseInt(properties.getProperty("hashtag.photos.like.probability")));
-        }
     }
 
 }
