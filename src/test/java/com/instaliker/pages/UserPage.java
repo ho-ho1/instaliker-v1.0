@@ -27,7 +27,7 @@ public class UserPage extends Page {
     @FindBy(xpath = ".//section//*[name()='svg'][@aria-label='Unlike']")
     List<WebElement> unlikeButtons;
 
-    @FindBy(xpath = ".//a[contains(@class, 'coreSpriteRightPaginationArrow')]")
+    @FindBy(xpath = ".//*[name()='svg'][@aria-label='Next']")
     List<WebElement> nextPhotoButtons;
 
     @FindBy(xpath = ".//*[name()='svg'][@aria-label='Close']")
@@ -36,7 +36,7 @@ public class UserPage extends Page {
     private final String instagramUserName;
 
     public UserPage(WebDriver driver, String instagramUsername) {
-        super(driver, INSTAGRAM_URL + instagramUsername);
+        super(driver, INSTAGRAM_URL + "/" + instagramUsername);
         this.instagramUserName = instagramUsername;
     }
 
@@ -127,6 +127,8 @@ public class UserPage extends Page {
             if (isNextPhotoAvailable) {
                 log.info("Click next");
                 nextPhotoButtons.get(0).click();
+            } else {
+                log.info("It's the last photo");
             }
         } while (isNextPhotoAvailable);
         clickCloseButton();
@@ -178,8 +180,8 @@ public class UserPage extends Page {
     }
 
     private void navigateUserPageIfNecessary() {
-        if (!driver.getCurrentUrl().contains(INSTAGRAM_URL + instagramUserName)) {
-            driver.get(INSTAGRAM_URL + instagramUserName);
+        if (!driver.getCurrentUrl().contains(INSTAGRAM_URL + "/" + instagramUserName)) {
+            driver.get(INSTAGRAM_URL + "/" + instagramUserName);
         }
     }
 

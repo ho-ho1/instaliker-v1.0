@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 @Slf4j
 public class Page {
 
-    public static final String INSTAGRAM_URL = "https://www.instagram.com/";
+    public static final String INSTAGRAM_URL = "https://www.instagram.com";
 
     protected WebDriver driver;
     protected WebDriverWait wait;

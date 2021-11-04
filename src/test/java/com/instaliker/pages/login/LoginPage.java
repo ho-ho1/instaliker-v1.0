@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 @Slf4j
@@ -26,9 +25,7 @@ public class LoginPage extends Page {
     WebElement acceptCookiesButton;
 
     public LoginPage(WebDriver driver) {
-        super(driver);
-        driver.get("https://www.instagram.com/accounts/login/");
-        PageFactory.initElements(driver, this);
+        super(driver, INSTAGRAM_URL + "/accounts/login/");
     }
 
     public void acceptCookies() {
